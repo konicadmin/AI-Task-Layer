@@ -1,0 +1,25 @@
+*.iml
+.gradle
+/local.properties
+/.idea/
+.DS_Store
+/build
+/captures
+.externalNativeBuild
+.cxx
+local.properties
+*.apk
+*.aab
+*.keystore
+*.jks
+
+# Kotlin / Java
+*.class
+hs_err_pid*
+
+# Models / artifacts (kept out of VCS — delivered via Play Feature Delivery)
+/app/src/main/assets/models/
+*.tflite
+*.task
+*.gguf
+*.bin
