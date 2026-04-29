@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.localskills.app.engine.builder.DraftError
 import com.localskills.app.engine.builder.DraftField
-import com.localskills.app.engine.builder.DraftLimits
 import com.localskills.app.engine.builder.DraftPattern
 import com.localskills.app.engine.builder.DraftRule
 import com.localskills.app.engine.builder.DraftToManifest

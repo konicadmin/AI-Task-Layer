@@ -43,5 +43,47 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name=".ui.imports.ImportReceiverActivity"
+            android:exported="true"
+            android:label="@string/import_receiver_label"
+            android:noHistory="true"
+            android:theme="@style/Theme.LocalSkills">
+            <!-- ACTION_VIEW: open a saved .skill.json file from a file/chat app. -->
+            <intent-filter android:label="@string/import_receiver_label">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="application/json" />
+            </intent-filter>
+            <intent-filter android:label="@string/import_receiver_label">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="content" />
+                <data android:scheme="file" />
+                <data android:mimeType="text/*" />
+                <data android:pathPattern=".*\\.skill\\.json" />
+            </intent-filter>
+            <!-- ACTION_SEND: pasted manifest text whose body starts with AOSL-SKILL/1. -->
+            <intent-filter android:label="@string/import_receiver_label">
+                <action android:name="android.intent.action.SEND" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <data android:mimeType="text/*" />
+            </intent-filter>
+        </activity>
+
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="${applicationId}.fileprovider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths" />
+        </provider>
+
     </application>
 </manifest>

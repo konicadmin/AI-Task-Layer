@@ -2,4 +2,5 @@
 <resources>
     <string name="app_name">Local Skills</string>
     <string name="share_receiver_label">Run with Local Skills</string>
+    <string name="import_receiver_label">Import Local Skill</string>
 </resources>
