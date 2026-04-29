@@ -47,7 +47,7 @@ class ImportReceiverActivity : ComponentActivity() {
                 Scaffold { padding ->
                     ImportSkillScreen(
                         onCancel = { finish() },
-                        onInstalled = { finish() },
+                        onInstalled = { _ -> finish() },
                         modifier = Modifier.padding(padding),
                     )
                 }
