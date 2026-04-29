@@ -1,9 +1,3 @@
-// P5-WIRING: this is the top-level entry composable for the Skill Builder.
-// To navigate here from the app shell, add a destination to the Compose nav
-// graph in MainActivity (or its NavHost) that routes "builder" to a call of
-// BuilderScreen(onClose = navController::popBackStack). MainActivity must
-// not be edited in P2 — P5 will integrate the route along with the rest of
-// the navigation surface.
 package com.localskills.app.ui.builder
 
 import androidx.compose.foundation.layout.Arrangement

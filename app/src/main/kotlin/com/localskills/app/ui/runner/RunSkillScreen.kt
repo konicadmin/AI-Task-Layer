@@ -35,13 +35,6 @@ import com.localskills.app.skill.manifest.InputKind
 /**
  * Skill input form + run trigger. On a successful run hands off to
  * [ReviewScreen] inline.
- *
- * P5-WIRING: register this composable on the host NavHost as e.g.
- * `runner/{skillId}`. The library screen's "Run" CTA should navigate
- * here. ShareReceiverActivity (already in the manifest) should also
- * route into this screen once the share flow lands in P3 — the
- * `// TODO(P1): hand off to skill runner / picker` comment in
- * ShareReceiverActivity is the integration point.
  */
 @Composable
 fun RunSkillScreen(

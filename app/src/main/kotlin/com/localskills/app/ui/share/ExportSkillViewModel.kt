@@ -14,11 +14,8 @@ import javax.inject.Inject
 
 /**
  * State holder for the export screen. The screen previews the share
- * text and delegates intent construction to [SkillExporter].
- *
- * P5-WIRING: the manifest is supplied by the caller for now. Once P1's
- * `SkillRepository` is available, we will accept a skill id and load
- * the manifest from the canonical store inside the ViewModel.
+ * text and delegates intent construction to [SkillExporter]. The host
+ * loads the manifest from `SkillRepository` and hands it in via [bind].
  */
 @HiltViewModel
 class ExportSkillViewModel @Inject constructor(

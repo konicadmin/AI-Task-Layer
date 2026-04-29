@@ -7,24 +7,34 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import com.localskills.app.engine.CaptureInput
 import com.localskills.app.skill.manifest.InputKind
+import com.localskills.app.ui.MainActivity
 import dagger.hilt.android.AndroidEntryPoint
 
 /**
  * Entry point for ACTION_SEND intents. Builds a [CaptureInput] from
- * shared text or image and hands off to the runner. Routing logic
- * (skill picker, classifier) lands in P1.
+ * shared text or image and forwards the user to the library, where they
+ * pick which installed skill should consume the input. Skill selection
+ * stays user-driven so we never silently run an extractor on shared data.
  */
 @AndroidEntryPoint
 class ShareReceiverActivity : ComponentActivity() {
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         val capture = buildCapture(intent)
         if (capture == null) {
             Toast.makeText(this, "Unsupported content", Toast.LENGTH_SHORT).show()
-        } else {
-            // TODO(P1): hand off to skill runner / picker
-            Toast.makeText(this, "Captured ${capture.kind}", Toast.LENGTH_SHORT).show()
+            finish()
+            return
         }
+
+        PendingShareHolder.put(capture)
+        Toast.makeText(this, "Pick a skill to run on the shared ${capture.kind.name.lowercase()}.", Toast.LENGTH_SHORT).show()
+        startActivity(
+            Intent(this, MainActivity::class.java).apply {
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+            },
+        )
         finish()
     }
 
@@ -57,4 +67,18 @@ class ShareReceiverActivity : ComponentActivity() {
             else -> null
         }
     }
+}
+
+/**
+ * Process-local hand-off slot for shared captures. Intentionally not
+ * persisted: a share intent is a foreground user gesture, and surviving
+ * process death would let stale shared content silently feed a skill
+ * after a future launch.
+ */
+object PendingShareHolder {
+    @Volatile private var pending: CaptureInput? = null
+
+    fun put(capture: CaptureInput) { pending = capture }
+    fun consume(): CaptureInput? = pending.also { pending = null }
+    fun peek(): CaptureInput? = pending
 }

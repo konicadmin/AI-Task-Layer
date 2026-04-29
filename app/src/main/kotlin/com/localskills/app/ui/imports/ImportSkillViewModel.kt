@@ -90,5 +90,13 @@ data class ImportUiState(
 
     /** Pulled from [ImportPreview] for parity with the importer. */
     val preview: ImportPreview?
-        get() = manifest?.let { ImportPreview(manifest = it, safety = safety!!, sandbox = sandbox) }
+        get() {
+            val m = manifest
+            val s = safety
+            return if (m != null && s != null) {
+                ImportPreview(manifest = m, safety = s, sandbox = sandbox)
+            } else {
+                null
+            }
+        }
 }

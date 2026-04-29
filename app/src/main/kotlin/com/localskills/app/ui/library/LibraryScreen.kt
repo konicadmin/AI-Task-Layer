@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -27,16 +28,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.localskills.app.data.repo.InstalledSkill
 
 /**
- * Shows the user's installed skills with quick enable/delete/run actions.
- *
- * P5-WIRING: register a route for this screen in the host NavGraph (e.g.
- * `library`) and make it the start destination. The "Run" button currently
- * delegates to [onRun] — the parent NavHost should push the runner screen
- * for the selected skill id.
+ * Shows the user's installed skills with quick enable/delete/run/share actions.
+ * The "New skill" CTA opens the builder.
  */
 @Composable
 fun LibraryScreen(
     onRun: (skillId: String) -> Unit,
+    onBuild: () -> Unit = {},
+    onShare: (skillId: String) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
@@ -47,12 +46,17 @@ fun LibraryScreen(
             .fillMaxSize()
             .padding(16.dp),
     ) {
-        Text("Skill Library", style = MaterialTheme.typography.headlineSmall)
-        Spacer(Modifier.height(4.dp))
-        Text(
-            "Skills are data, not code. Install, share, or build your own.",
-            style = MaterialTheme.typography.bodySmall,
-        )
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Column(modifier = Modifier.weight(1f)) {
+                Text("Skill Library", style = MaterialTheme.typography.headlineSmall)
+                Spacer(Modifier.height(4.dp))
+                Text(
+                    "Skills are data, not code. Install, share, or build your own.",
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            }
+            Button(onClick = onBuild) { Text("New skill") }
+        }
         Spacer(Modifier.height(16.dp))
 
         if (skills.isEmpty()) {
@@ -67,6 +71,7 @@ fun LibraryScreen(
                         onToggle = { viewModel.toggleEnabled(skill, it) },
                         onDelete = { viewModel.delete(skill) },
                         onRun = { onRun(skill.id) },
+                        onShare = { onShare(skill.id) },
                     )
                 }
             }
@@ -80,6 +85,7 @@ private fun SkillRow(
     onToggle: (Boolean) -> Unit,
     onDelete: () -> Unit,
     onRun: () -> Unit,
+    onShare: () -> Unit,
 ) {
     ElevatedCard(modifier = Modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp)) {
@@ -106,9 +112,9 @@ private fun SkillRow(
             Spacer(Modifier.height(12.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 Button(onClick = onRun, enabled = skill.enabled) { Text("Run") }
+                OutlinedButton(onClick = onShare) { Text("Share") }
                 TextButton(onClick = onDelete) { Text("Delete") }
             }
         }
     }
 }
-

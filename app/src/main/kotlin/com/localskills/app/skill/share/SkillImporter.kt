@@ -14,11 +14,9 @@ import javax.inject.Singleton
  *
  * Each stage short-circuits on failure. Imported skills are always
  * installed with `enabled = false` and `source = IMPORTED`; the user
- * must explicitly review and enable them from the library.
- *
- * P5-WIRING: the [installer] dependency is satisfied by an in-package
- * port. P5 will bind it to the runner-owned `SkillRepository` so the
- * canonical store is the only place skills live.
+ * must explicitly review and enable them from the library. The
+ * [installer] is bound to a `SkillRepository`-backed implementation in
+ * `ShareModule` so the canonical store is the only place skills live.
  */
 @Singleton
 class SkillImporter @Inject constructor(

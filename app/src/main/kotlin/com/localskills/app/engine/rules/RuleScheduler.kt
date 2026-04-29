@@ -13,12 +13,8 @@ import javax.inject.Singleton
 
 /**
  * Schedules the periodic rule sweep. Kept as a thin wrapper so unit tests can
- * stub WorkManager without instantiating a Worker, and so P5 can call a single
- * function from the Application class.
- *
- * P5-WIRING: call [scheduleAll] from [com.localskills.app.LocalSkillsApp.onCreate]
- * once per process start so freshly installed rules begin sweeping without a
- * launch of the runner UI.
+ * stub WorkManager without instantiating a Worker. Called from
+ * [com.localskills.app.LocalSkillsApp.onCreate].
  */
 @Singleton
 class RuleScheduler @Inject constructor() {

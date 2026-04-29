@@ -18,7 +18,6 @@ import com.localskills.app.skill.manifest.InputKind
 import com.localskills.app.skill.manifest.SkillManifest
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlin.time.measureTimedValue
 
 /**
  * Orchestrates a single skill execution end-to-end:
@@ -52,10 +51,9 @@ class SkillRunner @Inject constructor(
         val manifest = installed.manifest
         val run = runRepository.startRun(skillId, capture)
 
-        val (outcome, elapsed) = measureTimedValue {
-            executePipeline(manifest, capture, run)
-        }
-        val durationMs = elapsed.inWholeMilliseconds
+        val started = System.nanoTime()
+        val outcome = executePipeline(manifest, capture)
+        val durationMs = (System.nanoTime() - started) / 1_000_000L
 
         return when (outcome) {
             is PipelineResult.Success -> {
@@ -83,7 +81,6 @@ class SkillRunner @Inject constructor(
     private suspend fun executePipeline(
         manifest: SkillManifest,
         capture: CaptureInput,
-        run: RunEntity,
     ): PipelineResult {
         val rawText = capture.rawText.orEmpty()
         if (rawText.length > manifest.limits.maxInputChars) {

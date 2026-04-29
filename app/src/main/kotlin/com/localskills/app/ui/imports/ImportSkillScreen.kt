@@ -16,11 +16,12 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.localskills.app.skill.manifest.SkillManifest
 import com.localskills.app.skill.share.ImportResult
 import com.localskills.app.skill.share.SafetyReport
@@ -42,12 +43,14 @@ fun ImportSkillScreen(
     modifier: Modifier = Modifier,
     viewModel: ImportSkillViewModel = hiltViewModel(),
 ) {
-    val state by viewModel.state.collectAsStateWithLifecycle()
+    val state by viewModel.state.collectAsState()
 
     // When install completes successfully, hand off to the host.
     val terminal = state.terminal
-    if (terminal is ImportResult.Installed) {
-        onInstalled(terminal.id)
+    LaunchedEffect(terminal) {
+        if (terminal is ImportResult.Installed) {
+            onInstalled(terminal.id)
+        }
     }
 
     Column(
