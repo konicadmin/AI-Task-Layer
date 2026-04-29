@@ -1,0 +1,35 @@
+{
+  "manifest_version": "skill/1",
+  "id": "bill-reminder.v1",
+  "name": "Bill Reminder",
+  "description": "Captures the provider, amount, billing cycle, and due date from a bill or subscription notice.",
+  "inputs": ["text", "image"],
+  "instruction": "Extract the bill provider, amount due, billing cycle (monthly/quarterly/yearly/one_time), and the due date in ISO-8601. Set autopay only if the message clearly states it.",
+  "output_schema": {
+    "provider": "text",
+    "amount": "number",
+    "billing_cycle": "text",
+    "due_date": "date",
+    "autopay": "boolean"
+  },
+  "rules": [
+    {
+      "condition": "due_date is in 2 days",
+      "action": "notify",
+      "title": "Bill due soon",
+      "body": "Pay your upcoming bill to avoid late fees."
+    },
+    {
+      "condition": "due_date is in 1 days",
+      "action": "notify",
+      "title": "Bill due tomorrow",
+      "body": "Last day to pay your bill."
+    }
+  ],
+  "limits": {
+    "max_input_chars": 8000,
+    "max_ocr_pages": 2,
+    "max_model_tokens": 2048,
+    "max_runtime_ms": 4000
+  }
+}

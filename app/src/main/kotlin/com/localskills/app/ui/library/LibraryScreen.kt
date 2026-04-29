@@ -15,17 +15,22 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ElevatedCard
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.localskills.app.data.repo.InstalledSkill
+import com.localskills.app.skill.manifest.InputKind
+import com.localskills.app.ui.share.PendingShareHolder
 
 /**
  * Shows the user's installed skills with quick enable/delete/run/share actions.
@@ -40,6 +45,7 @@ fun LibraryScreen(
     viewModel: LibraryViewModel = hiltViewModel(),
 ) {
     val skills by viewModel.skills.collectAsState()
+    val pendingKind = remember { mutableStateOf(PendingShareHolder.peek()?.kind) }
 
     Column(
         modifier = modifier
@@ -57,6 +63,19 @@ fun LibraryScreen(
             }
             Button(onClick = onBuild) { Text("New skill") }
         }
+        pendingKind.value?.let { kind ->
+            Spacer(Modifier.height(12.dp))
+            Surface(
+                color = MaterialTheme.colorScheme.secondaryContainer,
+                modifier = Modifier.fillMaxWidth(),
+            ) {
+                Text(
+                    text = "Shared ${kind.name.lowercase()} ready — tap a skill below to run it.",
+                    style = MaterialTheme.typography.bodyMedium,
+                    modifier = Modifier.padding(12.dp),
+                )
+            }
+        }
         Spacer(Modifier.height(16.dp))
 
         if (skills.isEmpty()) {
@@ -66,8 +85,11 @@ fun LibraryScreen(
         } else {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 items(skills, key = { it.id }) { skill ->
+                    val acceptsPending = pendingKind.value
+                        ?.let { it in skill.manifest.inputs } ?: false
                     SkillRow(
                         skill = skill,
+                        highlighted = acceptsPending,
                         onToggle = { viewModel.toggleEnabled(skill, it) },
                         onDelete = { viewModel.delete(skill) },
                         onRun = { onRun(skill.id) },
@@ -82,12 +104,20 @@ fun LibraryScreen(
 @Composable
 private fun SkillRow(
     skill: InstalledSkill,
+    highlighted: Boolean,
     onToggle: (Boolean) -> Unit,
     onDelete: () -> Unit,
     onRun: () -> Unit,
     onShare: () -> Unit,
 ) {
-    ElevatedCard(modifier = Modifier.fillMaxWidth()) {
+    val cardColors = if (highlighted) {
+        androidx.compose.material3.CardDefaults.elevatedCardColors(
+            containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+        )
+    } else {
+        androidx.compose.material3.CardDefaults.elevatedCardColors()
+    }
+    ElevatedCard(modifier = Modifier.fillMaxWidth(), colors = cardColors) {
         Column(modifier = Modifier.padding(16.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f)) {

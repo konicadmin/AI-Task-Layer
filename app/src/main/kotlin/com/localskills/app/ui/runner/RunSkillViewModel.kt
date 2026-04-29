@@ -10,6 +10,7 @@ import com.localskills.app.engine.CaptureInput
 import com.localskills.app.engine.runner.RunOutcome
 import com.localskills.app.engine.runner.SkillRunner
 import com.localskills.app.skill.manifest.InputKind
+import com.localskills.app.ui.share.PendingShareHolder
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +33,34 @@ class RunSkillViewModel @Inject constructor(
         if (_state.value.skill?.id == skillId) return
         viewModelScope.launch {
             val skill = skillRepository.findById(skillId)
-            _state.update { it.copy(skill = skill) }
+            // If a share-sheet hand-off is waiting and matches an input kind
+            // this skill accepts, pre-fill the form so the user only has to
+            // confirm + run. Anything left over stays in the holder for the
+            // next runner load (e.g. user picks a different skill).
+            val pending = PendingShareHolder.peek()
+            val prefilledText = if (
+                pending != null &&
+                skill != null &&
+                pending.kind == InputKind.TEXT &&
+                InputKind.TEXT in skill.manifest.inputs
+            ) {
+                PendingShareHolder.consume()?.rawText.orEmpty()
+            } else {
+                ""
+            }
+            val prefilledImage = if (
+                pending != null &&
+                skill != null &&
+                pending.kind == InputKind.IMAGE &&
+                InputKind.IMAGE in skill.manifest.inputs
+            ) {
+                PendingShareHolder.consume()?.artifactPath?.let(Uri::parse)
+            } else {
+                null
+            }
+            _state.update {
+                it.copy(skill = skill, inputText = prefilledText, imageUri = prefilledImage)
+            }
         }
     }
 
