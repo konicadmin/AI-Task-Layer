@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  FileProvider configuration for sharing exported skill manifests.
+  We expose the share-export sub-folders of the app's private cache and
+  files dirs only — never the app data root.
+-->
+<paths>
+    <cache-path
+        name="skill_share_cache"
+        path="skill_share/" />
+    <files-path
+        name="skill_share_files"
+        path="skill_share/" />
+</paths>
