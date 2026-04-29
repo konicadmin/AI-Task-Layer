@@ -176,18 +176,23 @@ class RuleParser(private val tokens: List<Token>) {
     private fun parseList(): List<RuleAst.Expr> {
         expectSymbol("(")
         val items = mutableListOf<RuleAst.Expr>()
-        if (!(peek() is Token.Symbol && (peek() as Token.Symbol).text == ")")) {
+        if (!isSymbol(")")) {
             items += parseOr()
-            while (peek() is Token.Symbol && (peek() as Token.Symbol).text == ",") {
+            while (isSymbol(",")) {
                 advance()
                 items += parseOr()
             }
         }
-        expectSymbol(")")
         if (items.isEmpty()) {
             throw RuleParseException("empty list literal", peek().position)
         }
+        expectSymbol(")")
         return items
+    }
+
+    private fun isSymbol(text: String): Boolean {
+        val tk = peek()
+        return tk is Token.Symbol && tk.text == text
     }
 
     private fun parseDuration(): Int {
