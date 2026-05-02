@@ -1,0 +1,19 @@
+{
+  "manifest_version": "skill/1",
+  "id": "notes-summarizer.v1",
+  "name": "Notes Summarizer",
+  "description": "Turns long meeting or class notes into a short summary plus action items.",
+  "inputs": ["text"],
+  "instruction": "Read the provided notes and produce a 2-3 sentence summary, a comma-separated list of action items, and a single topic label.",
+  "output_schema": {
+    "topic": "text",
+    "summary": "text",
+    "action_items": "text"
+  },
+  "limits": {
+    "max_input_chars": 12000,
+    "max_ocr_pages": 0,
+    "max_model_tokens": 4096,
+    "max_runtime_ms": 6000
+  }
+}

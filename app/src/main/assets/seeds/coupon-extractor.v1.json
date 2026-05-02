@@ -1,0 +1,31 @@
+{
+  "manifest_version": "skill/1",
+  "id": "coupon-extractor.v1",
+  "name": "Coupon Extractor",
+  "description": "Extracts coupon code, offer, brand, and expiry from a pasted message or screenshot.",
+  "inputs": ["text", "image"],
+  "instruction": "Extract coupon code, offer, brand, and expiry date. Return ISO-8601 date for expiry_date.",
+  "output_schema": {
+    "brand": "text",
+    "coupon_code": "text",
+    "offer": "text",
+    "expiry_date": "date"
+  },
+  "patterns": [
+    { "name": "coupon_code", "regex": "[A-Z0-9]{4,16}" }
+  ],
+  "rules": [
+    {
+      "condition": "expiry_date is in 3 days",
+      "action": "notify",
+      "title": "Coupon expiring soon",
+      "body": "Use your code before it expires."
+    }
+  ],
+  "limits": {
+    "max_input_chars": 12000,
+    "max_ocr_pages": 2,
+    "max_model_tokens": 4096,
+    "max_runtime_ms": 4000
+  }
+}
